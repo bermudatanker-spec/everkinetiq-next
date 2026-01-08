@@ -248,8 +248,12 @@ const UI: Record<
   },
 };
 
-export default function Page({ params }: { params: { locale: string } }) {
-  const raw = params?.locale;
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params; // ✅ Next 15: params is Promise
   const locale: Locale = isLocale(raw) ? raw : "nl";
   const t = getDict(locale);
 
@@ -275,8 +279,12 @@ export default function Page({ params }: { params: { locale: string } }) {
             <div className="grid grid-cols-3 gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
               {stats.map((s) => (
                 <div key={s.label} className="text-center">
-                  <div className="text-2xl font-semibold text-[#F4C44E] md:text-3xl">{s.value}</div>
-                  <div className="mt-1 text-xs text-white/70 md:text-sm">{s.label}</div>
+                  <div className="text-2xl font-semibold text-[#F4C44E] md:text-3xl">
+                    {s.value}
+                  </div>
+                  <div className="mt-1 text-xs text-white/70 md:text-sm">
+                    {s.label}
+                  </div>
                 </div>
               ))}
             </div>

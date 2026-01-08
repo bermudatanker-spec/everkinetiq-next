@@ -17,9 +17,11 @@ export default async function RootLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+  // ✅ verplicht in Next 15
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : "nl";
   const t = getDict(locale);
 
   return (

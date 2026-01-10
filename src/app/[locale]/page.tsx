@@ -1,5 +1,7 @@
+// src/app/[locale]/page.tsx
 import PremiumBackground from "@/components/PremiumBackground";
 import HeroSection from "@/components/HeroSection";
+import ScrollRevealProvider from "@/components/ScrollRevealProvider";
 import Image from "next/image";
 import Link from "next/link";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
@@ -253,12 +255,12 @@ export default async function Page({
 }: {
   params: Promise<{ locale: string }>;
 }) {
-  const { locale: raw } = await params; // ✅ Next 15: params is Promise
+  const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : "nl";
   const t = getDict(locale);
 
   const stats = [
-    { value: "500+", label: t.hero.stats.projects },
+    { value: "1000+", label: t.hero.stats.projects },
     { value: "30+", label: t.hero.stats.years },
     { value: "100%", label: t.hero.stats.clients },
   ];
@@ -270,21 +272,24 @@ export default async function Page({
   return (
     <PremiumBackground>
       <main className="pt-0">
-        {/* HERO (vertaalbaar) */}
+        <ScrollRevealProvider />
+
+        {/* HERO */}
         <HeroSection t={t.hero} />
 
         {/* STATS (alleen hier) */}
-        <section className="relative -mt-10 pb-16">
+        <section data-reveal className="reveal relative -mt-10 pb-16">
           <div className="mx-auto max-w-6xl px-4">
             <div className="grid grid-cols-3 gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-              {stats.map((s) => (
-                <div key={s.label} className="text-center">
-                  <div className="text-2xl font-semibold text-[#F4C44E] md:text-3xl">
-                    {s.value}
-                  </div>
-                  <div className="mt-1 text-xs text-white/70 md:text-sm">
-                    {s.label}
-                  </div>
+              {stats.map((s, i) => (
+                <div
+                  key={s.label}
+                  data-reveal
+                  className="reveal text-center"
+                  style={{ ["--reveal-delay" as any]: `${i * 90}ms` }}
+                >
+                  <div className="text-2xl font-semibold text-[#F4C44E] md:text-3xl">{s.value}</div>
+                  <div className="mt-1 text-xs text-white/70 md:text-sm">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -294,7 +299,7 @@ export default async function Page({
         {/* DIENSTEN */}
         <section id="diensten" className="scroll-mt-28 py-20">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="mx-auto max-w-3xl text-center">
+            <div data-reveal className="reveal mx-auto max-w-3xl text-center">
               <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs tracking-wide text-white/80">
                 {t.sections.servicesKicker}
               </div>
@@ -307,10 +312,12 @@ export default async function Page({
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {services.map((s) => (
+              {services.map((s, i) => (
                 <div
                   key={s.title}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.25)] transition hover:bg-white/10"
+                  data-reveal
+                  className="reveal rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.25)] transition hover:bg-white/10"
+                  style={{ ["--reveal-delay" as any]: `${i * 80}ms` }}
                 >
                   <div className="text-2xl">{s.icon}</div>
                   <h3 className="mt-4 text-base font-semibold text-white">{s.title}</h3>
@@ -319,7 +326,7 @@ export default async function Page({
               ))}
             </div>
 
-            <div className="mt-10 text-center">
+            <div data-reveal className="reveal mt-10 text-center" style={{ ["--reveal-delay" as any]: `120ms` }}>
               <Link
                 href={`/${locale}/diensten`}
                 className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"
@@ -333,7 +340,7 @@ export default async function Page({
         {/* OVER ONS */}
         <section id="over-ons" className="scroll-mt-28 py-20">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="mx-auto max-w-3xl text-center">
+            <div data-reveal className="reveal mx-auto max-w-3xl text-center">
               <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs tracking-wide text-white/80">
                 {t.sections.aboutKicker}
               </div>
@@ -346,15 +353,20 @@ export default async function Page({
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {ui.aboutCards.map((x) => (
-                <div key={x.t} className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              {ui.aboutCards.map((x, i) => (
+                <div
+                  key={x.t}
+                  data-reveal
+                  className="reveal rounded-2xl border border-white/10 bg-white/5 p-6"
+                  style={{ ["--reveal-delay" as any]: `${i * 90}ms` }}
+                >
                   <h3 className="text-base font-semibold text-white">{x.t}</h3>
                   <p className="mt-2 text-sm text-white/70">{x.d}</p>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 text-center">
+            <div data-reveal className="reveal mt-10 text-center" style={{ ["--reveal-delay" as any]: `120ms` }}>
               <Link
                 href={`/${locale}/over-ons`}
                 className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"
@@ -368,7 +380,7 @@ export default async function Page({
         {/* PROJECTEN */}
         <section id="projecten" className="scroll-mt-28 py-20">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="mx-auto max-w-3xl text-center">
+            <div data-reveal className="reveal mx-auto max-w-3xl text-center">
               <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs tracking-wide text-white/80">
                 {t.sections.projectsKicker}
               </div>
@@ -381,10 +393,12 @@ export default async function Page({
             </div>
 
             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {projects.map((p) => (
+              {projects.map((p, i) => (
                 <article
                   key={p.title}
-                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_18px_60px_rgba(0,0,0,0.25)]"
+                  data-reveal
+                  className="reveal overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-[0_18px_60px_rgba(0,0,0,0.25)]"
+                  style={{ ["--reveal-delay" as any]: `${i * 90}ms` }}
                 >
                   <div className="relative aspect-[16/10]">
                     <Image
@@ -404,7 +418,7 @@ export default async function Page({
               ))}
             </div>
 
-            <div className="mt-10 text-center">
+            <div data-reveal className="reveal mt-10 text-center" style={{ ["--reveal-delay" as any]: `120ms` }}>
               <Link
                 href={`/${locale}/projecten`}
                 className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"
@@ -418,7 +432,7 @@ export default async function Page({
         {/* CONTACT */}
         <section id="contact" className="scroll-mt-28 py-20">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="mx-auto max-w-3xl text-center">
+            <div data-reveal className="reveal mx-auto max-w-3xl text-center">
               <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs tracking-wide text-white/80">
                 {t.sections.contactKicker}
               </div>
@@ -431,7 +445,11 @@ export default async function Page({
             </div>
 
             <div className="mt-10 grid gap-4 lg:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div
+                data-reveal
+                className="reveal rounded-2xl border border-white/10 bg-white/5 p-6"
+                style={{ ["--reveal-delay" as any]: `80ms` }}
+              >
                 <form className="grid gap-4">
                   <div className="grid gap-2">
                     <label className="text-sm text-white/80">{ui.contact.name}</label>
@@ -487,7 +505,11 @@ export default async function Page({
               </div>
 
               <div className="grid gap-4">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div
+                  data-reveal
+                  className="reveal rounded-2xl border border-white/10 bg-white/5 p-6"
+                  style={{ ["--reveal-delay" as any]: `140ms` }}
+                >
                   <h3 className="text-base font-semibold text-white">{ui.contact.details}</h3>
                   <div className="mt-3 space-y-2 text-sm text-white/70">
                     <p>
@@ -503,7 +525,11 @@ export default async function Page({
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <div
+                  data-reveal
+                  className="reveal overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+                  style={{ ["--reveal-delay" as any]: `200ms` }}
+                >
                   <iframe
                     title="Google Maps"
                     className="h-[280px] w-full"
@@ -515,7 +541,7 @@ export default async function Page({
               </div>
             </div>
 
-            <div className="mt-10 text-center">
+            <div data-reveal className="reveal mt-10 text-center" style={{ ["--reveal-delay" as any]: `120ms` }}>
               <Link
                 href={`/${locale}/contact`}
                 className="inline-flex h-11 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"

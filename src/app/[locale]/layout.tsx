@@ -19,7 +19,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  // ✅ verplicht in Next 15
+  // ✅ Next 15: params is Promise
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : "nl";
   const t = getDict(locale);
@@ -34,12 +34,36 @@ export default async function RootLayout({
               services: t.nav.services,
               about: t.nav.about,
               projects: t.nav.projects,
+              news: t.nav.news,
               contact: t.nav.contact,
               cta: t.nav.cta,
             }}
           />
+
           <main>{children}</main>
-          <Footer locale={locale} />
+
+          <Footer
+            locale={locale}
+            labels={{
+              brandLine: t.footer.brandLine,
+              navTitle: t.footer.navTitle,
+              legalTitle: t.footer.legalTitle,
+
+              home: t.footer.home,
+              services: t.nav.services,
+              about: t.nav.about,
+              projects: t.nav.projects,
+              contact: t.nav.contact,
+
+              privacy: t.footer.privacy,
+              terms: t.footer.terms,
+              cookies: t.footer.cookies,
+              gdpr: t.footer.gdpr,
+
+              vat: t.footer.vatLabel,
+              vatValue: t.footer.vatValue,
+            }}
+          />
         </Providers>
       </body>
     </html>

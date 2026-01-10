@@ -1,6 +1,7 @@
+// src/components/Navigation.tsx
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ type Labels = {
   about: string;
   projects: string;
   contact: string;
+  news: string; // ✅ NIEUWS in header
   cta: string;
 };
 
@@ -44,7 +46,7 @@ function cx(...classes: Array<string | false | undefined | null>) {
 function stripLocaleFromPath(pathname: string) {
   // "/nl/diensten" -> "/diensten"
   // "/nl" -> "/"
-  const parts = pathname.split("/");
+  const parts = (pathname || "/").split("/");
   const first = parts[1];
   if ((ALL_LOCALES as readonly string[]).includes(first)) {
     const rest = "/" + parts.slice(2).join("/");
@@ -58,7 +60,7 @@ export default function Navigation({ locale, labels }: Props) {
   const pathname = usePathname() || `/${locale}`;
   const router = useRouter();
 
-  const restPath = stripLocaleFromPath(pathname); // "/" | "/diensten" | ...
+  const restPath = stripLocaleFromPath(pathname);
   const isHome = restPath === "/" || restPath === "";
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -66,9 +68,12 @@ export default function Navigation({ locale, labels }: Props) {
   const [activeHash, setActiveHash] = useState<string>("");
   const [langOpen, setLangOpen] = useState(false);
 
-  const HEADER_OFFSET = 80; // jouw header: h-20
+  const langRef = useRef<HTMLDivElement | null>(null);
 
+  const HEADER_OFFSET = 80; // header h-20
   const homePath = `/${locale}`;
+
+  const isNewsActive = useMemo(() => restPath === "/nieuws" || restPath.startsWith("/nieuws/"), [restPath]);
 
   const scrollToHash = useCallback(
     (hash: string, behavior: ScrollBehavior = "smooth") => {
@@ -103,7 +108,7 @@ export default function Navigation({ locale, labels }: Props) {
     [homePath, isHome, router, scrollToHash],
   );
 
-  // shadow on scroll
+  // Shadow on scroll
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 24);
     onScroll();
@@ -111,7 +116,7 @@ export default function Navigation({ locale, labels }: Props) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // keep hash in state
+  // Keep hash in state
   useEffect(() => {
     const setFromLocation = () => setActiveHash(window.location.hash || "");
     setFromLocation();
@@ -119,13 +124,13 @@ export default function Navigation({ locale, labels }: Props) {
     return () => window.removeEventListener("hashchange", setFromLocation);
   }, []);
 
-  // close menus on route change
+  // Close menus on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setLangOpen(false);
   }, [pathname]);
 
-  // lock body scroll when mobile open
+  // Lock body scroll when mobile menu open
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const prev = document.body.style.overflow;
@@ -135,7 +140,7 @@ export default function Navigation({ locale, labels }: Props) {
     };
   }, [isMobileMenuOpen]);
 
-  // if landed on /[locale]#hash, scroll after render
+  // If landed on /[locale]#hash, scroll after render
   useEffect(() => {
     if (!isHome) return;
     const hash = window.location.hash;
@@ -156,6 +161,28 @@ export default function Navigation({ locale, labels }: Props) {
 
     window.setTimeout(tick, 0);
   }, [isHome, scrollToHash]);
+
+  // Close language dropdown on outside click + ESC
+  useEffect(() => {
+    if (!langOpen) return;
+
+    const onDown = (e: MouseEvent) => {
+      const target = e.target as Node | null;
+      if (!target) return;
+      if (langRef.current && !langRef.current.contains(target)) setLangOpen(false);
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLangOpen(false);
+    };
+
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [langOpen]);
 
   const headerClass = useMemo(
     () =>
@@ -181,7 +208,6 @@ export default function Navigation({ locale, labels }: Props) {
       setLangOpen(false);
       setIsMobileMenuOpen(false);
 
-      // behoud hash alleen als je op home bent
       const hash = isHome ? window.location.hash : "";
       const target = `/${to}${restPath === "/" ? "" : restPath}${hash}`;
       router.push(target);
@@ -225,7 +251,6 @@ export default function Navigation({ locale, labels }: Props) {
             {NAV.map((item) => {
               const active = isActive(item);
               const label = labels[item.key];
-
               const href = isHome ? item.hash : `/${locale}${item.route}`;
 
               return (
@@ -254,12 +279,34 @@ export default function Navigation({ locale, labels }: Props) {
                 </Link>
               );
             })}
+
+            {/* ✅ NIEUWS (blog) in header */}
+            <Link
+              href={`/${locale}/nieuws`}
+              aria-current={isNewsActive ? "page" : undefined}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setLangOpen(false);
+              }}
+              className={cx(
+                "relative text-sm font-medium transition-colors",
+                isNewsActive ? "text-[#F4C44E]" : "text-white/80 hover:text-white",
+              )}
+            >
+              {labels.news}
+              <span
+                className={cx(
+                  "absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#F4C44E] transition-transform duration-300",
+                  isNewsActive ? "scale-x-100" : "scale-x-0",
+                )}
+              />
+            </Link>
           </nav>
 
           {/* Right controls */}
           <div className="flex items-center gap-3">
             {/* Language selector */}
-            <div className="relative hidden sm:block">
+            <div ref={langRef} className="relative hidden sm:block">
               <button
                 type="button"
                 onClick={() => setLangOpen((v) => !v)}
@@ -276,7 +323,7 @@ export default function Navigation({ locale, labels }: Props) {
                   className="absolute right-0 mt-2 w-44 overflow-hidden rounded-2xl border border-white/10 bg-[#050B2A]/90 backdrop-blur-md shadow-[0_18px_60px_rgba(0,0,0,0.35)]"
                   role="menu"
                 >
-                  {ALL_LOCALES.map((l) => (
+                  {(ALL_LOCALES as readonly Locale[]).map((l) => (
                     <button
                       key={l}
                       type="button"
@@ -289,17 +336,14 @@ export default function Navigation({ locale, labels }: Props) {
                       )}
                       role="menuitem"
                     >
-                      {l.toUpperCase()}
+                      {String(l).toUpperCase()}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            <Button
-              className="hidden sm:inline-flex"
-              onClick={() => router.push(`/${locale}/contact`)}
-            >
+            <Button className="hidden sm:inline-flex" onClick={() => router.push(`/${locale}/contact`)}>
               {labels.cta}
             </Button>
 
@@ -310,11 +354,7 @@ export default function Navigation({ locale, labels }: Props) {
               aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((v) => !v)}
             >
-              {isMobileMenuOpen ? (
-                <X className="h-5 w-5 text-white" />
-              ) : (
-                <Menu className="h-5 w-5 text-white" />
-              )}
+              {isMobileMenuOpen ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}
             </button>
           </div>
         </div>
@@ -324,7 +364,7 @@ export default function Navigation({ locale, labels }: Props) {
       <div
         className={cx(
           "md:hidden overflow-hidden transition-[max-height,opacity] duration-300",
-          isMobileMenuOpen ? "max-h-[680px] opacity-100" : "max-h-0 opacity-0",
+          isMobileMenuOpen ? "max-h-[740px] opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <div className="mx-auto max-w-6xl px-4 pb-6">
@@ -332,7 +372,7 @@ export default function Navigation({ locale, labels }: Props) {
             <div className="flex flex-col gap-2">
               {/* mobile language */}
               <div className="grid grid-cols-5 gap-2 pb-2">
-                {ALL_LOCALES.map((l) => (
+                {(ALL_LOCALES as readonly Locale[]).map((l) => (
                   <button
                     key={l}
                     type="button"
@@ -344,7 +384,7 @@ export default function Navigation({ locale, labels }: Props) {
                         : "bg-white/5 text-white/80 hover:bg-white/10 hover:text-white",
                     )}
                   >
-                    {l.toUpperCase()}
+                    {String(l).toUpperCase()}
                   </button>
                 ))}
               </div>
@@ -365,6 +405,7 @@ export default function Navigation({ locale, labels }: Props) {
                         goTo(item);
                       } else {
                         setIsMobileMenuOpen(false);
+                        setLangOpen(false);
                       }
                     }}
                     className={cx(
@@ -378,6 +419,24 @@ export default function Navigation({ locale, labels }: Props) {
                   </Link>
                 );
               })}
+
+              {/* ✅ NIEUWS (blog) in mobile menu */}
+              <Link
+                href={`/${locale}/nieuws`}
+                aria-current={isNewsActive ? "page" : undefined}
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setLangOpen(false);
+                }}
+                className={cx(
+                  "rounded-xl px-4 py-3 text-sm font-medium transition",
+                  isNewsActive
+                    ? "bg-white/10 text-[#F4C44E]"
+                    : "text-white/85 hover:bg-white/5 hover:text-white",
+                )}
+              >
+                {labels.news}
+              </Link>
 
               <Button
                 className="mt-2 w-full rounded-xl bg-[#F4C44E] text-[#0B1033] hover:bg-[#F4C44E]/90"

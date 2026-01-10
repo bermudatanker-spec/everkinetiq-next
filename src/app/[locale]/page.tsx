@@ -514,13 +514,13 @@ export default async function Page({
                   <div className="mt-3 space-y-2 text-sm text-white/70">
                     <p>
                       <span className="text-white/90">{ui.contact.address}</span>{" "}
-                      Ever Kinetiq BV, Industriezone Noord, 1000 Brussel
+                      Ever Kinetiq BV, Bieshof 11, 2321 Meer (Hoogstraten)
                     </p>
                     <p>
-                      <span className="text-white/90">{ui.contact.tel}</span> +32 2 123 45 67
+                      <span className="text-white/90">{ui.contact.tel}</span> +31 (0)629317622
                     </p>
                     <p>
-                      <span className="text-white/90">{ui.contact.mail}</span> info@everkinetiq.be
+                      <span className="text-white/90">{ui.contact.mail}</span> info@ek-b.be
                     </p>
                   </div>
                 </div>

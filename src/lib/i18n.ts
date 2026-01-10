@@ -118,7 +118,7 @@ const dicts: Record<Locale, Dict> = {
       cookies: "Cookie beleid",
       gdpr: "GDPR",
       vatLabel: "BTW:",
-      vatValue: "BE XXXX.XXX.XXX",
+      vatValue: "BE 0819.534.291",
     },
   },
 
@@ -174,7 +174,7 @@ const dicts: Record<Locale, Dict> = {
       cookies: "Cookie Policy",
       gdpr: "GDPR",
       vatLabel: "VAT:",
-      vatValue: "BE XXXX.XXX.XXX",
+      vatValue: "BE 0819.534.291",
     },
   },
 
@@ -231,7 +231,7 @@ const dicts: Record<Locale, Dict> = {
       cookies: "Politique de cookies",
       gdpr: "GDPR",
       vatLabel: "TVA :",
-      vatValue: "BE XXXX.XXX.XXX",
+      vatValue: "BE 0819.534.291",
     },
   },
 
@@ -287,7 +287,7 @@ const dicts: Record<Locale, Dict> = {
       cookies: "Política de cookies",
       gdpr: "GDPR",
       vatLabel: "IVA:",
-      vatValue: "BE XXXX.XXX.XXX",
+      vatValue: "BE 0819.534.291",
     },
   },
 
@@ -343,7 +343,7 @@ const dicts: Record<Locale, Dict> = {
       cookies: "Cookie-Richtlinie",
       gdpr: "GDPR",
       vatLabel: "USt.:",
-      vatValue: "BE XXXX.XXX.XXX",
+      vatValue: "BE 0819.534.291",
     },
   },
 };

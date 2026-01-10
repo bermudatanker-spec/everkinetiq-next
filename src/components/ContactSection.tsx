@@ -212,11 +212,11 @@ export default function ContactSection() {
                       Adres
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      Ever Kinetiq BV
+                      Ever Kinetiq Belgium BV
                       <br />
-                      Industriezone Noord
+                      Bieshof 11
                       <br />
-                      1000 Brussel, België
+                      2321 Meer (Hoogstraten), België
                     </p>
                   </div>
                 </div>
@@ -230,7 +230,7 @@ export default function ContactSection() {
                       Telefoon
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      +32 2 123 45 67
+                      +31 (0)629317622
                       <br />
                       Ma - Vr: 08:00 - 18:00
                     </p>
@@ -246,9 +246,9 @@ export default function ContactSection() {
                       E-mail
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      info@everkinetiq.be
+                      info@ek-b.be
                       <br />
-                      offerte@everkinetiq.be
+                      offerte@ek-b.be
                     </p>
                   </div>
                 </div>

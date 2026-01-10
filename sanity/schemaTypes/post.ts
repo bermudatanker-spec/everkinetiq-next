@@ -9,65 +9,22 @@ const LOCALES = [
   { title: "Deutsch", value: "de" },
 ] as const;
 
-type LocaleValue = (typeof LOCALES)[number]["value"];
+type LocaleKey = (typeof LOCALES)[number]["value"];
 
-function i18nStringField(name: string, title: string) {
-  return defineField({
-    name,
-    title,
-    type: "object",
-    fields: LOCALES.map((l) =>
-      defineField({
-        name: l.value,
-        title: l.title,
-        type: "string",
-      }),
-    ),
-    // ✅ Alleen NL verplicht
-    validation: (Rule) =>
-      Rule.custom((val: Record<LocaleValue, string> | undefined) => {
-        if (!val?.nl || String(val.nl).trim().length < 1) return "Nederlands is verplicht.";
-        return true;
-      }),
+function requireNlObject(Rule: any, fieldLabel = "Nederlands") {
+  return Rule.custom((value: Record<string, any> | undefined) => {
+    if (!value || typeof value !== "object") return `${fieldLabel} is verplicht.`;
+    if (!value.nl || String(value.nl).trim().length === 0) return `${fieldLabel} is verplicht.`;
+    return true;
   });
 }
 
-function i18nTextField(name: string, title: string) {
-  return defineField({
-    name,
-    title,
-    type: "object",
-    fields: LOCALES.map((l) =>
-      defineField({
-        name: l.value,
-        title: l.title,
-        type: "text",
-        rows: 3,
-      }),
-    ),
-  });
-}
-
-function i18nPortableTextField(name: string, title: string) {
-  return defineField({
-    name,
-    title,
-    type: "object",
-    fields: LOCALES.map((l) =>
-      defineField({
-        name: l.value,
-        title: l.title,
-        type: "array",
-        of: [{ type: "block" }],
-      }),
-    ),
-    // ✅ Alleen NL verplicht
-    validation: (Rule) =>
-      Rule.custom((val: Record<LocaleValue, any> | undefined) => {
-        const nl = val?.nl;
-        if (!nl || !Array.isArray(nl) || nl.length === 0) return "Nederlandse inhoud is verplicht.";
-        return true;
-      }),
+function requireNlPortableText(Rule: any) {
+  return Rule.custom((value: Record<string, any> | undefined) => {
+    if (!value || typeof value !== "object") return "Inhoud NL is verplicht.";
+    const nl = value.nl;
+    if (!Array.isArray(nl) || nl.length === 0) return "Inhoud NL is verplicht.";
+    return true;
   });
 }
 
@@ -76,17 +33,63 @@ export default defineType({
   title: "Post",
   type: "document",
   fields: [
-    i18nStringField("title", "Titel (per taal)"),
+    /**
+     * ✅ NIEUW (Optie B): i18n titel
+     * Gebruik deze in GROQ: titleI18n[$locale] met fallback naar titleI18n.nl
+     */
+    defineField({
+      name: "titleI18n",
+      title: "Titel (per taal)",
+      type: "object",
+      fields: LOCALES.map((l) =>
+        defineField({
+          name: l.value,
+          title: l.title,
+          type: "string",
+        }),
+      ),
+      validation: (Rule) => requireNlObject(Rule, "Titel (NL)"),
+    }),
 
-    i18nTextField("excerpt", "Samenvatting (per taal)"),
+    /**
+     * ✅ NIEUW (Optie B): i18n excerpt
+     */
+    defineField({
+      name: "excerptI18n",
+      title: "Samenvatting (per taal)",
+      type: "object",
+      fields: LOCALES.map((l) =>
+        defineField({
+          name: l.value,
+          title: l.title,
+          type: "text",
+          rows: 3,
+        }),
+      ),
+    }),
 
+    /**
+     * ✅ Slug (bouwt op NL titel)
+     */
     defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
       options: {
-        source: (doc: any) => doc?.title?.nl ?? doc?.title?.en ?? "post",
+        source: (doc: any) =>
+          doc?.titleI18n?.nl ??
+          doc?.titleI18n?.en ??
+          doc?.title ?? // legacy fallback
+          "post",
         maxLength: 96,
+        slugify: (input: string) =>
+          input
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w-]+/g, "")
+            .replace(/--+/g, "-")
+            .slice(0, 96),
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -97,6 +100,9 @@ export default defineType({
       type: "datetime",
     }),
 
+    /**
+     * ✅ Cover (nieuw)
+     */
     defineField({
       name: "cover",
       title: "Cover",
@@ -104,18 +110,89 @@ export default defineType({
       options: { hotspot: true },
     }),
 
-    i18nPortableTextField("body", "Inhoud (per taal)"),
+    /**
+     * ✅ mainImage (legacy / fallback)
+     * Sommige templates gebruiken mainImage i.p.v. cover → voorkomt “Unknown field found”
+     */
+    defineField({
+      name: "mainImage",
+      title: "Afbeelding (legacy)",
+      type: "image",
+      options: { hotspot: true },
+      hidden: true,
+    }),
+
+    /**
+     * ✅ NIEUW (Optie B): i18n body (Portable Text)
+     */
+    defineField({
+      name: "bodyI18n",
+      title: "Inhoud (per taal)",
+      type: "object",
+      fields: LOCALES.map((l) =>
+        defineField({
+          name: l.value,
+          title: l.title,
+          type: "array",
+          of: [{ type: "block" }],
+        }),
+      ),
+      validation: (Rule) => requireNlPortableText(Rule),
+    }),
+
+    /**
+     * ✅ author / categories (optioneel, maar voorkomt “Unknown field found” als die al bestaat)
+     */
+    defineField({
+      name: "author",
+      title: "Auteur",
+      type: "reference",
+      to: [{ type: "author" }],
+    }),
+    defineField({
+      name: "categories",
+      title: "Categorieën",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "category" }] }],
+    }),
+
+    /* ------------------------------------------------------------
+       🔒 LEGACY velden (hidden)
+       Deze houden je oude data “compatibel” zodat Studio niet crasht
+       en je rustig kan migreren naar titleI18n/excerptI18n/bodyI18n
+    ------------------------------------------------------------ */
+
+    defineField({
+      name: "title",
+      title: "Titel (legacy)",
+      type: "string",
+      hidden: true,
+    }),
+    defineField({
+      name: "excerpt",
+      title: "Samenvatting (legacy)",
+      type: "text",
+      hidden: true,
+    }),
+    defineField({
+      name: "body",
+      title: "Inhoud (legacy)",
+      type: "array",
+      of: [{ type: "block" }],
+      hidden: true,
+    }),
   ],
 
   preview: {
     select: {
-      titleNl: "title.nl",
-      titleEn: "title.en",
+      titleNl: "titleI18n.nl",
+      titleEn: "titleI18n.en",
+      legacyTitle: "title",
       media: "cover",
     },
-    prepare({ titleNl, titleEn, media }) {
+    prepare({ titleNl, titleEn, legacyTitle, media }) {
       return {
-        title: titleNl ?? titleEn ?? "Post",
+        title: titleNl ?? titleEn ?? legacyTitle ?? "Post",
         media,
       };
     },

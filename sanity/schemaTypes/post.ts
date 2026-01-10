@@ -1,65 +1,123 @@
-import {defineField, defineType} from 'sanity'
+// sanity/schemaTypes/post.ts
+import { defineField, defineType } from "sanity";
+
+const LOCALES = [
+  { title: "Nederlands", value: "nl" },
+  { title: "English", value: "en" },
+  { title: "Français", value: "fr" },
+  { title: "Español", value: "es" },
+  { title: "Deutsch", value: "de" },
+] as const;
+
+type LocaleValue = (typeof LOCALES)[number]["value"];
+
+function i18nStringField(name: string, title: string) {
+  return defineField({
+    name,
+    title,
+    type: "object",
+    fields: LOCALES.map((l) =>
+      defineField({
+        name: l.value,
+        title: l.title,
+        type: "string",
+      }),
+    ),
+    // ✅ Alleen NL verplicht
+    validation: (Rule) =>
+      Rule.custom((val: Record<LocaleValue, string> | undefined) => {
+        if (!val?.nl || String(val.nl).trim().length < 1) return "Nederlands is verplicht.";
+        return true;
+      }),
+  });
+}
+
+function i18nTextField(name: string, title: string) {
+  return defineField({
+    name,
+    title,
+    type: "object",
+    fields: LOCALES.map((l) =>
+      defineField({
+        name: l.value,
+        title: l.title,
+        type: "text",
+        rows: 3,
+      }),
+    ),
+  });
+}
+
+function i18nPortableTextField(name: string, title: string) {
+  return defineField({
+    name,
+    title,
+    type: "object",
+    fields: LOCALES.map((l) =>
+      defineField({
+        name: l.value,
+        title: l.title,
+        type: "array",
+        of: [{ type: "block" }],
+      }),
+    ),
+    // ✅ Alleen NL verplicht
+    validation: (Rule) =>
+      Rule.custom((val: Record<LocaleValue, any> | undefined) => {
+        const nl = val?.nl;
+        if (!nl || !Array.isArray(nl) || nl.length === 0) return "Nederlandse inhoud is verplicht.";
+        return true;
+      }),
+  });
+}
 
 export default defineType({
-  name: 'post',
-  title: 'Post',
-  type: 'document',
+  name: "post",
+  title: "Post",
+  type: "document",
   fields: [
+    i18nStringField("title", "Titel (per taal)"),
+
+    i18nTextField("excerpt", "Samenvatting (per taal)"),
+
     defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-    }),
-    defineField({
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
+      name: "slug",
+      title: "Slug",
+      type: "slug",
       options: {
-        source: 'title',
+        source: (doc: any) => doc?.title?.nl ?? doc?.title?.en ?? "post",
         maxLength: 96,
       },
+      validation: (Rule) => Rule.required(),
     }),
+
     defineField({
-      name: 'author',
-      title: 'Author',
-      type: 'reference',
-      to: {type: 'author'},
+      name: "date",
+      title: "Datum",
+      type: "datetime",
     }),
+
     defineField({
-      name: 'mainImage',
-      title: 'Main image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
+      name: "cover",
+      title: "Cover",
+      type: "image",
+      options: { hotspot: true },
     }),
-    defineField({
-      name: 'categories',
-      title: 'Categories',
-      type: 'array',
-      of: [{type: 'reference', to: {type: 'category'}}],
-    }),
-    defineField({
-      name: 'publishedAt',
-      title: 'Published at',
-      type: 'datetime',
-    }),
-    defineField({
-      name: 'body',
-      title: 'Body',
-      type: 'blockContent',
-    }),
+
+    i18nPortableTextField("body", "Inhoud (per taal)"),
   ],
 
   preview: {
     select: {
-      title: 'title',
-      author: 'author.name',
-      media: 'mainImage',
+      titleNl: "title.nl",
+      titleEn: "title.en",
+      media: "cover",
     },
-    prepare(selection) {
-      const {author} = selection
-      return {...selection, subtitle: author && `by ${author}`}
+    prepare({ titleNl, titleEn, media }) {
+      return {
+        title: titleNl ?? titleEn ?? "Post",
+        media,
+      };
     },
   },
-})
+});

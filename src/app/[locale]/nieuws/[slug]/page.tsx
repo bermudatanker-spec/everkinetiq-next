@@ -1,3 +1,4 @@
+// src/app/[locale]/nieuws/[slug]/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 import PremiumBackground from "@/components/PremiumBackground";
@@ -5,16 +6,20 @@ import PortableContent from "@/components/PortableContent";
 import { getNewsPost, getAllNewsSlugs } from "@/lib/blog";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
 
-export const revalidate = 3600;
+export const revalidate = 3600; // 1 uur
 
 export async function generateStaticParams() {
-  // Build voor alle locales + slugs
+  // ✅ Optie B: slugs zijn niet per locale, dus 1x ophalen
+  const slugs = await getAllNewsSlugs();
+
+  // Build voor alle locales × alle slugs
   const locales: Locale[] = ["nl", "fr", "en", "es", "de"];
   const all: Array<{ locale: string; slug: string }> = [];
 
   for (const locale of locales) {
-    const slugs = await getAllNewsSlugs(locale);
-    slugs.forEach((slug) => all.push({ locale, slug }));
+    for (const slug of slugs) {
+      all.push({ locale, slug });
+    }
   }
 
   return all;
@@ -32,11 +37,15 @@ export default async function NewsPostPage({
   const post = await getNewsPost(locale, slug);
 
   const backLabel =
-    locale === "nl" ? "Terug naar nieuws" :
-    locale === "fr" ? "Retour aux actualités" :
-    locale === "es" ? "Volver a noticias" :
-    locale === "de" ? "Zurück zu Neuigkeiten" :
-    "Back to news";
+    locale === "nl"
+      ? "Terug naar nieuws"
+      : locale === "fr"
+        ? "Retour aux actualités"
+        : locale === "es"
+          ? "Volver a noticias"
+          : locale === "de"
+            ? "Zurück zu Neuigkeiten"
+            : "Back to news";
 
   if (!post) {
     return (
@@ -54,7 +63,10 @@ export default async function NewsPostPage({
                       ? "Beitrag nicht gefunden."
                       : "Post not found."}
             </p>
-            <Link href={`/${locale}/nieuws`} className="mt-4 inline-block text-[#F4C44E]">
+            <Link
+              href={`/${locale}/nieuws`}
+              className="mt-4 inline-block text-[#F4C44E]"
+            >
               ← {backLabel}
             </Link>
           </div>
@@ -67,7 +79,10 @@ export default async function NewsPostPage({
     <PremiumBackground>
       <main className="pt-28">
         <article className="mx-auto max-w-3xl px-4 pb-16">
-          <Link href={`/${locale}/nieuws`} className="text-sm text-white/70 hover:text-white">
+          <Link
+            href={`/${locale}/nieuws`}
+            className="text-sm text-white/70 hover:text-white"
+          >
             ← {backLabel}
           </Link>
 
@@ -76,7 +91,9 @@ export default async function NewsPostPage({
           </h1>
 
           <div className="mt-2 flex items-center gap-4 text-sm text-white/60">
-            <span>{new Date(post.date).toLocaleDateString()}</span>
+            <span>
+              {post.date ? new Date(post.date).toLocaleDateString() : ""}
+            </span>
             <span>•</span>
             <span>{post.readingTime ?? "—"}</span>
           </div>
@@ -93,11 +110,12 @@ export default async function NewsPostPage({
             </div>
           ) : null}
 
-          {/* ✅ Portable Text (geen dangerouslySetInnerHTML) */}
+          {/* ✅ Portable Text */}
           <div className="mt-8">
             <PortableContent value={post.content ?? []} />
           </div>
 
+          {/* CTA */}
           <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6">
             <h2 className="text-lg font-semibold text-white">
               {locale === "nl"

@@ -93,3 +93,58 @@ export function getAllSlugs(locale: Locale): string[] {
     .filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, ""));
 }
+// ---------------------------------------------
+// ✅ Aliases voor "Nieuws" pagina's (zonder Sanity)
+// Hiermee kunnen je /nieuws routes werken met dezelfde markdown posts
+// ---------------------------------------------
+
+export type NewsPost = {
+  _id: string;          // stable id voor React keys
+  title: string;
+  slug: string;
+  excerpt?: string;     // korte samenvatting (we gebruiken description)
+  date: string;
+  cover?: string;
+  readingTime?: string;
+  language: Locale;
+  content: string;      // markdown body
+};
+
+// List voor /[locale]/nieuws
+export async function getNewsList(locale: Locale): Promise<NewsPost[]> {
+  const posts = getAllPosts(locale);
+  return posts.map((p) => ({
+    _id: `${p.locale}-${p.slug}`,
+    title: p.title,
+    slug: p.slug,
+    excerpt: p.description || undefined,
+    date: p.date,
+    cover: p.cover,
+    readingTime: p.readingTime,
+    language: p.locale,
+    content: p.content,
+  }));
+}
+
+// Detail voor /[locale]/nieuws/[slug]
+export async function getNewsPost(locale: Locale, slug: string): Promise<NewsPost | null> {
+  const p = getPostBySlug(locale, slug);
+  if (!p) return null;
+
+  return {
+    _id: `${p.locale}-${p.slug}`,
+    title: p.title,
+    slug: p.slug,
+    excerpt: p.description || undefined,
+    date: p.date,
+    cover: p.cover,
+    readingTime: p.readingTime,
+    language: p.locale,
+    content: p.content,
+  };
+}
+
+// Slugs voor SSG
+export async function getAllNewsSlugs(locale: Locale): Promise<string[]> {
+  return getAllSlugs(locale);
+}

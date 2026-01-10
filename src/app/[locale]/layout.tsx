@@ -53,6 +53,7 @@ export default async function RootLayout({
               services: t.nav.services,
               about: t.nav.about,
               projects: t.nav.projects,
+              news: t.nav.news,
               contact: t.nav.contact,
 
               privacy: t.footer.privacy,

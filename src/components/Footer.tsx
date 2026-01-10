@@ -16,6 +16,7 @@ type FooterLabels = {
   services: string;
   about: string;
   projects: string;
+  news: string;
   contact: string;
 
   privacy: string;
@@ -89,6 +90,9 @@ export default function Footer({
                 <Link href={`/${locale}#projecten`}>{labels.projects}</Link>
               </li>
               <li>
+                <Link href={`/${locale}#nieuws`}>{labels.news}</Link>
+                </li>
+                <li>
                 <Link href={`/${locale}#contact`}>{labels.contact}</Link>
               </li>
             </ul>

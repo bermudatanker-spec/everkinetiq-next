@@ -9,8 +9,6 @@ const LOCALES = [
   { title: "Deutsch", value: "de" },
 ] as const;
 
-type LocaleKey = (typeof LOCALES)[number]["value"];
-
 function requireNlObject(Rule: any, fieldLabel = "Nederlands") {
   return Rule.custom((value: Record<string, any> | undefined) => {
     if (!value || typeof value !== "object") return `${fieldLabel} is verplicht.`;
@@ -33,10 +31,7 @@ export default defineType({
   title: "Post",
   type: "document",
   fields: [
-    /**
-     * ✅ NIEUW (Optie B): i18n titel
-     * Gebruik deze in GROQ: titleI18n[$locale] met fallback naar titleI18n.nl
-     */
+    // ✅ i18n titel
     defineField({
       name: "titleI18n",
       title: "Titel (per taal)",
@@ -51,9 +46,7 @@ export default defineType({
       validation: (Rule) => requireNlObject(Rule, "Titel (NL)"),
     }),
 
-    /**
-     * ✅ NIEUW (Optie B): i18n excerpt
-     */
+    // ✅ i18n excerpt
     defineField({
       name: "excerptI18n",
       title: "Samenvatting (per taal)",
@@ -68,9 +61,7 @@ export default defineType({
       ),
     }),
 
-    /**
-     * ✅ Slug (bouwt op NL titel)
-     */
+    // ✅ slug gebaseerd op NL titel
     defineField({
       name: "slug",
       title: "Slug",
@@ -79,7 +70,7 @@ export default defineType({
         source: (doc: any) =>
           doc?.titleI18n?.nl ??
           doc?.titleI18n?.en ??
-          doc?.title ?? // legacy fallback
+          doc?.title ??
           "post",
         maxLength: 96,
         slugify: (input: string) =>
@@ -100,9 +91,7 @@ export default defineType({
       type: "datetime",
     }),
 
-    /**
-     * ✅ Cover (nieuw)
-     */
+    // ✅ cover image
     defineField({
       name: "cover",
       title: "Cover",
@@ -110,10 +99,7 @@ export default defineType({
       options: { hotspot: true },
     }),
 
-    /**
-     * ✅ mainImage (legacy / fallback)
-     * Sommige templates gebruiken mainImage i.p.v. cover → voorkomt “Unknown field found”
-     */
+    // ✅ legacy fallback image (hidden)
     defineField({
       name: "mainImage",
       title: "Afbeelding (legacy)",
@@ -122,9 +108,7 @@ export default defineType({
       hidden: true,
     }),
 
-    /**
-     * ✅ NIEUW (Optie B): i18n body (Portable Text)
-     */
+    // ✅ i18n body
     defineField({
       name: "bodyI18n",
       title: "Inhoud (per taal)",
@@ -140,9 +124,7 @@ export default defineType({
       validation: (Rule) => requireNlPortableText(Rule),
     }),
 
-    /**
-     * ✅ author / categories (optioneel, maar voorkomt “Unknown field found” als die al bestaat)
-     */
+    // ✅ optional relations
     defineField({
       name: "author",
       title: "Auteur",
@@ -156,12 +138,7 @@ export default defineType({
       of: [{ type: "reference", to: [{ type: "category" }] }],
     }),
 
-    /* ------------------------------------------------------------
-       🔒 LEGACY velden (hidden)
-       Deze houden je oude data “compatibel” zodat Studio niet crasht
-       en je rustig kan migreren naar titleI18n/excerptI18n/bodyI18n
-    ------------------------------------------------------------ */
-
+    // 🔒 legacy fields (hidden)
     defineField({
       name: "title",
       title: "Titel (legacy)",
@@ -183,17 +160,40 @@ export default defineType({
     }),
   ],
 
+  // ✅ PREVIEW: 100% safe (NOOIT object als title)
   preview: {
     select: {
-      titleNl: "titleI18n.nl",
-      titleEn: "titleI18n.en",
+      tNl: "titleI18n.nl",
+      tEn: "titleI18n.en",
+      tFr: "titleI18n.fr",
+      tDe: "titleI18n.de",
       legacyTitle: "title",
-      media: "cover",
+
+      slug: "slug.current",
+      date: "date",
+
+      cover: "cover",
+      mainImage: "mainImage",
     },
-    prepare({ titleNl, titleEn, legacyTitle, media }) {
+
+    prepare({ tNl, tEn, tFr, tDe, legacyTitle, slug, date, cover, mainImage }) {
+      const title =
+        (typeof tNl === "string" && tNl.trim()) ? tNl :
+        (typeof tEn === "string" && tEn.trim()) ? tEn :
+        (typeof tFr === "string" && tFr.trim()) ? tFr :
+        (typeof tDe === "string" && tDe.trim()) ? tDe :
+        (typeof legacyTitle === "string" && legacyTitle.trim()) ? legacyTitle :
+        "⛔ Geen titel";
+
+      const subtitleParts: string[] = [];
+      if (slug) subtitleParts.push(`/${slug}`);
+      if (date) subtitleParts.push(new Date(date).toLocaleDateString("nl-BE"));
+      const subtitle = subtitleParts.join(" · ");
+
       return {
-        title: titleNl ?? titleEn ?? legacyTitle ?? "Post",
-        media,
+        title,
+        subtitle,
+        media: cover || mainImage,
       };
     },
   },

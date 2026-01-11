@@ -16,6 +16,19 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // ✅ STUDIO: nooit i18n redirecten
+  if (pathname === "/studio" || pathname.startsWith("/studio/")) {
+    return NextResponse.next();
+  }
+
+  // ✅ OPTIONEEL (maar handig): /nl/studio -> /studio (zelfde voor andere locales)
+  const studioLocaleMatch = pathname.match(/^\/(nl|fr|en|es|de)\/studio(\/|$)/);
+  if (studioLocaleMatch) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/studio";
+    return NextResponse.redirect(url);
+  }
+
   // already has locale
   if (hasLocale(pathname)) return NextResponse.next();
 

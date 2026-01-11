@@ -18,9 +18,9 @@ function getCopy(locale: Locale): Copy {
     name: "Ever Kinetiq Belgium BV",
     email: "info@ek-b.nl",
     website: "https://ek-b.nl",
-    address: "Vul hier het adres in (straat + nr, postcode, gemeente, België)",
-    vat: "Vul hier het BTW-nummer in",
-    phone: "Vul hier telefoonnummer in (optioneel)",
+    address: "Bieshof 11, Meer (Hoogstraten), België",
+    vat: "BE 0819.534.291",
+    phone: "+31(0)629317622",
   };
 
   const c: Record<Locale, Copy> = {

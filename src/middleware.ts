@@ -11,22 +11,23 @@ function hasLocale(pathname: string) {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // ignore next internals
-  if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {
-    return NextResponse.next();
-  }
-
-  // ✅ STUDIO: nooit i18n redirecten
-  if (pathname === "/studio" || pathname.startsWith("/studio/")) {
-    return NextResponse.next();
-  }
-
-  // ✅ OPTIONEEL (maar handig): /nl/studio -> /studio (zelfde voor andere locales)
+  // ✅ Studio nooit via i18n laten lopen
+  // (ook handig als iemand /nl/studio intypt)
   const studioLocaleMatch = pathname.match(/^\/(nl|fr|en|es|de)\/studio(\/|$)/);
   if (studioLocaleMatch) {
     const url = req.nextUrl.clone();
     url.pathname = "/studio";
     return NextResponse.redirect(url);
+  }
+
+  // ✅ /studio (en alles eronder) volledig met rust laten
+  if (pathname === "/studio" || pathname.startsWith("/studio/")) {
+    return NextResponse.next();
+  }
+
+  // ignore next internals + api + assets/files
+  if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.includes(".")) {
+    return NextResponse.next();
   }
 
   // already has locale
@@ -38,6 +39,7 @@ export function middleware(req: NextRequest) {
   return NextResponse.redirect(url);
 }
 
+// ✅ BELANGRIJK: studio hier UITSLUITEN
 export const config = {
-  matcher: ["/((?!_next|api|.*\\..*).*)"],
+  matcher: ["/((?!_next|api|studio|.*\\..*).*)"],
 };

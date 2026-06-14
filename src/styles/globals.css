@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ============ THEME TOKENS ============ */
+@layer base {
+  :root {
+    /* Deep Violet Luxe — Fase 3 kleurenstrategie (blauw-paars DNA behouden, warm goud accent) */
+    --background: 240 50% 6%;
+    --foreground: 248 100% 99%;
+    --card: 240 45% 11%;
+    --card-foreground: 248 100% 99%;
+    --popover: 240 45% 11%;
+    --popover-foreground: 248 100% 99%;
+
+    --muted: 244 40% 18%;
+    --muted-foreground: 248 20% 70%;
+
+    --border: 244 38% 24%;
+    --input: 244 38% 24%;
+    --ring: 263 69% 50%;
+
+    --primary: 263 69% 50%;
+    --primary-foreground: 248 100% 99%;
+    --primary-dark: 262 83% 38%;
+    --primary-light: 262 83% 58%;
+
+    --secondary: 244 75% 57%;
+    --secondary-foreground: 248 100% 99%;
+
+    --accent: 32 94% 44%;
+    --accent-foreground: 248 100% 99%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --radius: 0.5rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* ============ KEYFRAMES ============ */
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes wave {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-20%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+
+/* ============ UTILITIES ============ */
+@layer utilities {
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .animate-wave {
+    animation: wave 18s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 700ms ease both;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseSlow 4s ease-in-out infinite;
+    will-change: transform, opacity;
+  }
+
+  /* Hero background helper — Deep Violet Luxe */
+  .gradient-hero {
+    background: linear-gradient(
+      135deg,
+      hsl(240 50% 5%) 0%,
+      hsl(250 55% 10%) 35%,
+      hsl(263 60% 16%) 70%,
+      hsl(250 55% 8%) 100%
+    );
+  }
+
+  /* Gold text gradient */
+  .text-gradient-gold {
+    background: linear-gradient(
+      135deg,
+      hsl(38 92% 50%) 0%,
+      hsl(32 95% 44%) 45%,
+      hsl(38 92% 58%) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Card surface gradient */
+  .gradient-card {
+    background: linear-gradient(
+      135deg,
+      hsl(240 45% 11%) 0%,
+      hsl(244 40% 16%) 100%
+    );
+  }
+
+  /* Section background gradient */
+  .gradient-section {
+    background: linear-gradient(
+      180deg,
+      hsl(240 50% 6%) 0%,
+      hsl(244 45% 9%) 100%
+    );
+  }
+}
+/* ========== HERO BUILD ANIMATIONS ========== */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-fade-up {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: heroFadeUp 720ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes heroFadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Letter-by-letter build */
+.hero-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(1px);
+  animation: heroLetterIn 520ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes heroLetterIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Logo “build/materialize” */
+.hero-logo-build {
+  opacity: 0;
+  transform: translateY(10px) scale(0.94);
+  filter: blur(6px);
+  animation: heroLogoBuild 900ms cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  animation-delay: 140ms;
+}
+
+@keyframes heroLogoBuild {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-fade-up,
+  .hero-letter,
+  .hero-logo-build {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+}

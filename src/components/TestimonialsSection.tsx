@@ -12,41 +12,53 @@ type Props = {
   title: string;
   subtitle: string;
   items: Testimonial[];
+  light?: boolean;
 };
 
-export default function TestimonialsSection({ kicker, title, subtitle, items }: Props) {
+export default function TestimonialsSection({ kicker, title, subtitle, items, light = true }: Props) {
   return (
-    <section id="reviews" className="scroll-mt-28 py-20">
-      <div className="mx-auto max-w-6xl px-4">
-        <div data-reveal className="reveal mx-auto max-w-3xl text-center">
-          <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs tracking-wide text-white/80">
+    <section
+      id="reviews"
+      className={`scroll-mt-28 py-32 ${light ? "bg-[#F5F5F7]" : "bg-[#080818]"}`}
+    >
+      <div className="mx-auto max-w-6xl px-6">
+        <div data-reveal className="reveal mx-auto max-w-3xl text-center mb-14">
+          <p className={`text-xs font-semibold tracking-widest uppercase mb-3 ${light ? "text-[#6D28D9]" : "text-[#a78bfa]"}`}>
             {kicker}
-          </div>
-          <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
+          </p>
+          <h2 className={`font-heading text-3xl font-bold tracking-tight md:text-4xl lg:text-[2.75rem] ${light ? "text-gray-900" : "text-white"}`}>
             {title}
           </h2>
-          <p className="mt-3 text-base leading-relaxed text-white/70 md:text-lg">
+          <p className={`mt-4 text-base leading-relaxed md:text-lg ${light ? "text-gray-500" : "text-white/60"}`}>
             {subtitle}
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {items.map((item, i) => (
             <div
               key={item.name}
               data-reveal
-              className="reveal gradient-card rounded-2xl border border-white/10 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.25)]"
+              className={`reveal rounded-2xl p-7 ${
+                light
+                  ? "bg-white border border-gray-100 shadow-sm"
+                  : "border border-white/10 bg-[#111126]"
+              }`}
               style={{ ["--reveal-delay" as any]: `${i * 90}ms` }}
             >
-              <div className="flex gap-1 text-[#F4C44E]">
+              <div className="flex gap-1 text-[#7C3AED]">
                 {Array.from({ length: 5 }).map((_, idx) => (
                   <Star key={idx} className="h-4 w-4 fill-current" />
                 ))}
               </div>
-              <p className="mt-4 text-sm leading-relaxed text-white/80">&ldquo;{item.quote}&rdquo;</p>
-              <div className="mt-6 border-t border-white/10 pt-4">
-                <div className="text-sm font-semibold text-white">{item.name}</div>
-                <div className="mt-1 text-xs text-white/60">{item.location} &middot; {item.project}</div>
+              <p className={`mt-4 text-sm leading-relaxed ${light ? "text-gray-600" : "text-white/75"}`}>
+                &ldquo;{item.quote}&rdquo;
+              </p>
+              <div className={`mt-6 border-t pt-4 ${light ? "border-gray-100" : "border-white/10"}`}>
+                <div className={`text-sm font-semibold ${light ? "text-gray-900" : "text-white"}`}>{item.name}</div>
+                <div className={`mt-1 text-xs ${light ? "text-gray-400" : "text-white/50"}`}>
+                  {item.location} &middot; {item.project}
+                </div>
               </div>
             </div>
           ))}

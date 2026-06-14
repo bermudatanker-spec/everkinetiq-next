@@ -1,5 +1,4 @@
 // src/app/[locale]/gdpr/page.tsx
-import PremiumBackground from "@/components/PremiumBackground";
 import { isLocale, type Locale } from "@/lib/i18n";
 
 type Section = { h: string; p: string[]; list?: string[] };
@@ -104,18 +103,19 @@ function getCopy(locale: Locale): Copy {
   return c[locale];
 }
 
-export default function GdprPage({ params }: { params: { locale: string } }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+export default async function GdprPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "nl";
   const t = getCopy(locale);
 
   return (
-    <PremiumBackground>
-      <main className="mx-auto max-w-4xl px-4 pt-28 pb-20 text-white">
+    <main className="bg-white">
+      <div className="mx-auto max-w-4xl px-4 pt-28 pb-20 text-gray-900">
         <h1 className="text-3xl font-semibold tracking-tight">{t.title}</h1>
-        <p className="mt-2 text-sm text-white/60">{t.updated}</p>
+        <p className="mt-2 text-sm text-gray-400">{t.updated}</p>
 
         {t.intro.map((p, i) => (
-          <p key={i} className="mt-4 text-white/80 leading-relaxed">
+          <p key={i} className="mt-4 text-gray-500 leading-relaxed">
             {p}
           </p>
         ))}
@@ -123,14 +123,14 @@ export default function GdprPage({ params }: { params: { locale: string } }) {
         <div className="mt-10 space-y-10">
           {t.sections.map((s, i) => (
             <section key={i}>
-              <h2 className="text-xl font-semibold">{s.h}</h2>
+              <h2 className="text-xl font-semibold text-gray-900">{s.h}</h2>
               {s.p.map((p, idx) => (
-                <p key={idx} className="mt-3 text-white/80 leading-relaxed">
+                <p key={idx} className="mt-3 text-gray-500 leading-relaxed">
                   {p}
                 </p>
               ))}
               {s.list?.length ? (
-                <ul className="mt-4 list-disc pl-6 text-white/80 space-y-2">
+                <ul className="mt-4 list-disc pl-6 text-gray-500 space-y-2">
                   {s.list.map((li, idx) => (
                     <li key={idx}>{li}</li>
                   ))}
@@ -139,7 +139,7 @@ export default function GdprPage({ params }: { params: { locale: string } }) {
             </section>
           ))}
         </div>
-      </main>
-    </PremiumBackground>
+      </div>
+    </main>
   );
 }

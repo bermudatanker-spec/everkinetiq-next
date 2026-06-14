@@ -153,7 +153,7 @@ export default async function ProjectDetailPage({
             <p className="text-white/70">
               {locale === "nl" ? "Project niet gevonden." : "Project not found."}
             </p>
-            <Link href={`/${locale}/projecten`} className="mt-4 inline-block text-[#F4C44E]">
+            <Link href={`/${locale}/projecten`} className="mt-4 inline-block text-[#7C3AED]">
               {l.back}
             </Link>
           </div>
@@ -236,7 +236,7 @@ export default async function ProjectDetailPage({
                     key={idx}
                     className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center shadow-[0_18px_60px_rgba(0,0,0,0.25)]"
                   >
-                    <div className="text-2xl font-bold text-[#F4C44E] md:text-3xl">{s.value}</div>
+                    <div className="text-2xl font-bold text-[#7C3AED] md:text-3xl">{s.value}</div>
                     {s.label && <div className="mt-1 text-sm text-white/60">{s.label}</div>}
                   </div>
                 ))}
@@ -261,7 +261,7 @@ export default async function ProjectDetailPage({
               )}
               {project.result && (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                  <h3 className="text-base font-semibold text-[#F4C44E]">{l.result}</h3>
+                  <h3 className="text-base font-semibold text-[#7C3AED]">{l.result}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-white/70">{project.result}</p>
                 </div>
               )}
@@ -361,7 +361,7 @@ export default async function ProjectDetailPage({
                     </div>
                     <div className="p-5">
                       <h3 className="text-base font-semibold text-white">{p.title}</h3>
-                      <div className="mt-3 text-sm font-semibold text-[#F4C44E]">{l.viewProject}</div>
+                      <div className="mt-3 text-sm font-semibold text-[#7C3AED]">{l.viewProject}</div>
                     </div>
                   </Link>
                 ))}
@@ -373,7 +373,7 @@ export default async function ProjectDetailPage({
           {project.reviewQuote && (
             <section className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-8">
               {project.reviewRating > 0 && (
-                <div className="flex gap-1 text-[#F4C44E]">
+                <div className="flex gap-1 text-[#7C3AED]">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <span key={i}>{i < project.reviewRating ? "★" : "☆"}</span>
                   ))}
@@ -399,7 +399,7 @@ export default async function ProjectDetailPage({
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href={`/${locale}/contact`}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-[#7C3AED] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
               >
                 {l.ctaQuote} →
               </Link>

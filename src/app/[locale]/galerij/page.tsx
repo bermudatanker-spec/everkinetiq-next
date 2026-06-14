@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import PremiumBackground from "@/components/PremiumBackground";
 import GalleryWall from "@/components/GalleryWall";
 import { TOTAL_PHOTOS } from "@/lib/gallery";
 import { isLocale, type Locale } from "@/lib/i18n";
@@ -79,37 +78,30 @@ export default async function GallerijPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <PremiumBackground>
-        <main className="pt-20">
-          {/* ── Page hero ──────────────────────────────────────────── */}
-          <section className="relative overflow-hidden border-b border-white/10 py-16 md:py-24">
-            {/* Background glow */}
-            <div className="pointer-events-none absolute left-1/4 top-0 h-96 w-96 -translate-y-1/2 rounded-full bg-[#D97706]/10 blur-3xl" />
-            <div className="pointer-events-none absolute right-1/4 bottom-0 h-96 w-96 translate-y-1/2 rounded-full bg-[#6D28D9]/10 blur-3xl" />
-
-            <div className="relative mx-auto max-w-7xl px-4 text-center">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#D97706]/30 bg-[#D97706]/10 px-4 py-1.5 text-xs tracking-widest text-[#D97706] uppercase">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#D97706]" />
-                {copy.badge}
-              </div>
-
-              <h1 className="mt-4 text-6xl font-black tracking-tighter text-white md:text-8xl lg:text-[10rem] leading-none">
-                {copy.title}
-              </h1>
-
-              <p className="mt-6 text-lg text-white/50 md:text-xl">
-                {copy.sub}
-              </p>
-
-              {/* Thin gold rule */}
-              <div className="mx-auto mt-8 h-[1px] w-24 bg-gradient-to-r from-transparent via-[#D97706] to-transparent" />
+      <main className="bg-white pt-20">
+        {/* ── Page hero ──────────────────────────────────────────── */}
+        <section className="bg-[#F5F5F7] py-16 md:py-24">
+          <div className="mx-auto max-w-7xl px-4 text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-4 py-1.5 text-xs font-medium tracking-widest text-[#7C3AED] uppercase">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#7C3AED]" />
+              {copy.badge}
             </div>
-          </section>
 
-          {/* ── Gallery wall ───────────────────────────────────────── */}
-          <GalleryWall />
-        </main>
-      </PremiumBackground>
+            <h1 className="mt-4 text-6xl font-black tracking-tighter text-gray-900 md:text-8xl lg:text-[10rem] leading-none">
+              {copy.title}
+            </h1>
+
+            <p className="mt-6 text-lg text-gray-500 md:text-xl">
+              {copy.sub}
+            </p>
+
+            <div className="mx-auto mt-8 h-[1px] w-24 bg-gradient-to-r from-transparent via-[#7C3AED] to-transparent" />
+          </div>
+        </section>
+
+        {/* ── Gallery wall ───────────────────────────────────────── */}
+        <GalleryWall />
+      </main>
     </>
   );
 }

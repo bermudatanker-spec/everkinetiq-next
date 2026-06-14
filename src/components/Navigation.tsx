@@ -95,16 +95,7 @@ export default function Navigation({ locale, labels }: Props) {
       setIsMobileMenuOpen(false);
       setLangOpen(false);
 
-      // Niet op home? -> naar /[locale]#hash zodat secties bestaan
-      if (!isHome) {
-        router.push(`${homePath}${item.hash}`);
-        return;
-      }
-
-      // Home: hash set + scroll met offset
-      history.replaceState(null, "", item.hash);
-      scrollToHash(item.hash, "smooth");
-      setActiveHash(item.hash);
+      router.push(`/${locale}${item.route}`);
     },
     [homePath, isHome, router, scrollToHash],
   );
@@ -223,7 +214,7 @@ export default function Navigation({ locale, labels }: Props) {
           {/* Logo -> /[locale] */}
           <Link
             href={homePath}
-            className="flex items-center gap-3 rounded-xl px-2 py-1 transition hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F4C44E]/60"
+            className="flex items-center gap-3 rounded-xl px-2 py-1 transition hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]/60"
             aria-label="Go home"
             onClick={(e) => {
               if (isHome) {
@@ -243,7 +234,7 @@ export default function Navigation({ locale, labels }: Props) {
               className="h-14 w-14 object-contain"
             />
             <span className="text-lg font-semibold tracking-tight text-white">
-              Ever<span className="text-[#F4C44E]">Kinetiq</span>
+              Ever<span className="text-[#7C3AED]">Kinetiq</span>
             </span>
           </Link>
 
@@ -252,28 +243,26 @@ export default function Navigation({ locale, labels }: Props) {
             {NAV.map((item) => {
               const active = isActive(item);
               const label = labels[item.key];
-              const href = isHome ? item.hash : `/${locale}${item.route}`;
+              const href = `/${locale}${item.route}`;
 
               return (
                 <Link
                   key={item.hash}
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  onClick={(e) => {
-                    if (isHome) {
-                      e.preventDefault();
-                      goTo(item);
-                    }
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setLangOpen(false);
                   }}
                   className={cx(
                     "relative text-sm font-medium transition-colors",
-                    active ? "text-[#F4C44E]" : "text-white/80 hover:text-white",
+                    active ? "text-[#7C3AED]" : "text-white/80 hover:text-white",
                   )}
                 >
                   {label}
                   <span
                     className={cx(
-                      "absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#F4C44E] transition-transform duration-300",
+                      "absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#7C3AED] transition-transform duration-300",
                       active ? "scale-x-100" : "scale-x-0",
                     )}
                   />
@@ -288,11 +277,11 @@ export default function Navigation({ locale, labels }: Props) {
               onClick={() => { setIsMobileMenuOpen(false); setLangOpen(false); }}
               className={cx(
                 "relative text-sm font-medium transition-colors",
-                isNewsActive ? "text-[#F4C44E]" : "text-white/80 hover:text-white",
+                isNewsActive ? "text-[#7C3AED]" : "text-white/80 hover:text-white",
               )}
             >
               {labels.news}
-              <span className={cx("absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#F4C44E] transition-transform duration-300", isNewsActive ? "scale-x-100" : "scale-x-0")} />
+              <span className={cx("absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#7C3AED] transition-transform duration-300", isNewsActive ? "scale-x-100" : "scale-x-0")} />
             </Link>
 
             {/* GALERIJ */}
@@ -305,11 +294,11 @@ export default function Navigation({ locale, labels }: Props) {
                   onClick={() => { setIsMobileMenuOpen(false); setLangOpen(false); }}
                   className={cx(
                     "relative text-sm font-medium transition-colors",
-                    isGalleryActive ? "text-[#F4C44E]" : "text-white/80 hover:text-white",
+                    isGalleryActive ? "text-[#7C3AED]" : "text-white/80 hover:text-white",
                   )}
                 >
                   {labels.gallery}
-                  <span className={cx("absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#F4C44E] transition-transform duration-300", isGalleryActive ? "scale-x-100" : "scale-x-0")} />
+                  <span className={cx("absolute -bottom-2 left-0 h-[2px] w-full origin-left bg-[#7C3AED] transition-transform duration-300", isGalleryActive ? "scale-x-100" : "scale-x-0")} />
                 </Link>
               );
             })()}
@@ -343,7 +332,7 @@ export default function Navigation({ locale, labels }: Props) {
                       className={cx(
                         "w-full px-4 py-3 text-left text-sm transition",
                         l === locale
-                          ? "bg-white/10 text-[#F4C44E]"
+                          ? "bg-white/10 text-[#7C3AED]"
                           : "text-white/85 hover:bg-white/5 hover:text-white",
                       )}
                       role="menuitem"
@@ -361,7 +350,7 @@ export default function Navigation({ locale, labels }: Props) {
 
             <button
               type="button"
-              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F4C44E]/60"
+              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]/60"
               aria-label={isMobileMenuOpen ? "Menu sluiten" : "Menu openen"}
               aria-expanded={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen((v) => !v)}
@@ -392,7 +381,7 @@ export default function Navigation({ locale, labels }: Props) {
                     className={cx(
                       "rounded-xl px-2 py-2 text-xs font-semibold transition",
                       l === locale
-                        ? "bg-white/10 text-[#F4C44E]"
+                        ? "bg-white/10 text-[#7C3AED]"
                         : "bg-white/5 text-white/80 hover:bg-white/10 hover:text-white",
                     )}
                   >
@@ -404,26 +393,21 @@ export default function Navigation({ locale, labels }: Props) {
               {NAV.map((item) => {
                 const active = isActive(item);
                 const label = labels[item.key];
-                const href = isHome ? item.hash : `/${locale}${item.route}`;
+                const href = `/${locale}${item.route}`;
 
                 return (
                   <Link
                     key={item.hash}
                     href={href}
                     aria-current={active ? "page" : undefined}
-                    onClick={(e) => {
-                      if (isHome) {
-                        e.preventDefault();
-                        goTo(item);
-                      } else {
-                        setIsMobileMenuOpen(false);
-                        setLangOpen(false);
-                      }
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setLangOpen(false);
                     }}
                     className={cx(
                       "rounded-xl px-4 py-3 text-sm font-medium transition",
                       active
-                        ? "bg-white/10 text-[#F4C44E]"
+                        ? "bg-white/10 text-[#7C3AED]"
                         : "text-white/85 hover:bg-white/5 hover:text-white",
                     )}
                   >
@@ -437,7 +421,7 @@ export default function Navigation({ locale, labels }: Props) {
                 href={`/${locale}/nieuws`}
                 aria-current={isNewsActive ? "page" : undefined}
                 onClick={() => { setIsMobileMenuOpen(false); setLangOpen(false); }}
-                className={cx("rounded-xl px-4 py-3 text-sm font-medium transition", isNewsActive ? "bg-white/10 text-[#F4C44E]" : "text-white/85 hover:bg-white/5 hover:text-white")}
+                className={cx("rounded-xl px-4 py-3 text-sm font-medium transition", isNewsActive ? "bg-white/10 text-[#7C3AED]" : "text-white/85 hover:bg-white/5 hover:text-white")}
               >
                 {labels.news}
               </Link>
@@ -450,7 +434,7 @@ export default function Navigation({ locale, labels }: Props) {
                     href={`/${locale}/galerij`}
                     aria-current={isGalleryActive ? "page" : undefined}
                     onClick={() => { setIsMobileMenuOpen(false); setLangOpen(false); }}
-                    className={cx("rounded-xl px-4 py-3 text-sm font-medium transition", isGalleryActive ? "bg-white/10 text-[#F4C44E]" : "text-white/85 hover:bg-white/5 hover:text-white")}
+                    className={cx("rounded-xl px-4 py-3 text-sm font-medium transition", isGalleryActive ? "bg-white/10 text-[#7C3AED]" : "text-white/85 hover:bg-white/5 hover:text-white")}
                   >
                     {labels.gallery}
                   </Link>
@@ -458,7 +442,7 @@ export default function Navigation({ locale, labels }: Props) {
               })()}
 
               <Button
-                className="mt-2 w-full rounded-xl bg-[#F4C44E] text-[#0B1033] hover:bg-[#F4C44E]/90"
+                className="mt-2 w-full rounded-xl bg-[#7C3AED] text-[#0B1033] hover:bg-[#7C3AED]/90"
                 onClick={() => router.push(`/${locale}/contact`)}
               >
                 {labels.cta}

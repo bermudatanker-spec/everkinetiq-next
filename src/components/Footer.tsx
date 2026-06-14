@@ -56,7 +56,7 @@ export default function Footer({
                 className="h-14 w-auto object-contain"
               />
               <span className="text-xl font-semibold text-white">
-                Ever<span className="text-[#F4C44E]">Kinetiq</span>
+                Ever<span className="text-[#7C3AED]">Kinetiq</span>
               </span>
             </Link>
 

@@ -65,7 +65,7 @@ export default async function NewsPostPage({
             </p>
             <Link
               href={`/${locale}/nieuws`}
-              className="mt-4 inline-block text-[#F4C44E]"
+              className="mt-4 inline-block text-[#7C3AED]"
             >
               ← {backLabel}
             </Link>
@@ -141,7 +141,7 @@ export default async function NewsPostPage({
             </p>
             <Link
               href={`/${locale}/contact`}
-              className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
+              className="mt-5 inline-flex h-11 items-center justify-center rounded-full bg-[#7C3AED] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
             >
               {t.nav.cta} →
             </Link>

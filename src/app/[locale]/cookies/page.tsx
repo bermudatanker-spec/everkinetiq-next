@@ -1,5 +1,4 @@
 // src/app/[locale]/cookies/page.tsx
-import PremiumBackground from "@/components/PremiumBackground";
 import { isLocale, type Locale } from "@/lib/i18n";
 
 type Copy = {
@@ -404,65 +403,64 @@ export const metadata = {
   description: "Cookiebeleid en informatie over het gebruik van cookies op deze website.",
 };
 
-export default function CookiesPage({
+export default async function CookiesPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "nl";
   const t = getCopy(locale);
 
   return (
-    <PremiumBackground>
-      <main className="pt-28">
-        <article className="mx-auto max-w-4xl px-4 pb-20 text-white">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-            {t.title}
-          </h1>
-          <p className="mt-2 text-sm text-white/60">{t.updated}</p>
+    <main className="bg-white pt-28">
+      <article className="mx-auto max-w-4xl px-4 pb-20 text-gray-900">
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+          {t.title}
+        </h1>
+        <p className="mt-2 text-sm text-gray-400">{t.updated}</p>
 
-          <p className="mt-6 text-white/80">{t.intro}</p>
+        <p className="mt-6 text-gray-500">{t.intro}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.whatTitle}</h2>
-          <p className="mt-3 text-white/80">{t.whatText}</p>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.whatTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.whatText}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.typesTitle}</h2>
-          <ul className="mt-4 space-y-4">
-            {t.typesBullets.map((b) => (
-              <li key={b.label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div className="font-semibold text-[#F4C44E]">{b.label}</div>
-                <div className="mt-2 text-white/80">{b.text}</div>
-              </li>
-            ))}
-          </ul>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.typesTitle}</h2>
+        <ul className="mt-4 space-y-4">
+          {t.typesBullets.map((b) => (
+            <li key={b.label} className="rounded-2xl border border-gray-100 bg-[#F5F5F7] p-4">
+              <div className="font-semibold text-[#7C3AED]">{b.label}</div>
+              <div className="mt-2 text-gray-500">{b.text}</div>
+            </li>
+          ))}
+        </ul>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.consentTitle}</h2>
-          <p className="mt-3 text-white/80">{t.consentText}</p>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.consentTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.consentText}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.manageTitle}</h2>
-          <p className="mt-3 text-white/80">{t.manageIntro}</p>
-          <ul className="mt-4 list-disc space-y-2 pl-6 text-white/80">
-            {t.manageBullets.map((x) => (
-              <li key={x}>{x}</li>
-            ))}
-          </ul>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.manageTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.manageIntro}</p>
+        <ul className="mt-4 list-disc space-y-2 pl-6 text-gray-500">
+          {t.manageBullets.map((x) => (
+            <li key={x}>{x}</li>
+          ))}
+        </ul>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.thirdTitle}</h2>
-          <p className="mt-3 text-white/80">{t.thirdText}</p>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.thirdTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.thirdText}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.retentionTitle}</h2>
-          <p className="mt-3 text-white/80">{t.retentionText}</p>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.retentionTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.retentionText}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.legalTitle}</h2>
-          <p className="mt-3 text-white/80">{t.legalText}</p>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.legalTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.legalText}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.contactTitle}</h2>
-          <p className="mt-3 text-white/80">{t.contactText}</p>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.contactTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.contactText}</p>
 
-          <h2 className="mt-10 text-xl font-semibold">{t.authorityTitle}</h2>
-          <p className="mt-3 text-white/80">{t.authorityText}</p>
-        </article>
-      </main>
-    </PremiumBackground>
+        <h2 className="mt-10 text-xl font-semibold text-gray-900">{t.authorityTitle}</h2>
+        <p className="mt-3 text-gray-500">{t.authorityText}</p>
+      </article>
+    </main>
   );
 }

@@ -77,11 +77,11 @@ export default async function Image({ params }: { params: Promise<{ locale: stri
                 width: 14,
                 height: 36,
                 borderRadius: 4,
-                background: "#F4C44E",
+                background: "#7C3AED",
               }}
             />
             <span style={{ fontSize: 38, fontWeight: 800, color: "#FFFFFF", letterSpacing: 1 }}>
-              Ever<span style={{ color: "#F4C44E" }}>Kinetiq</span>
+              Ever<span style={{ color: "#7C3AED" }}>Kinetiq</span>
             </span>
           </div>
 

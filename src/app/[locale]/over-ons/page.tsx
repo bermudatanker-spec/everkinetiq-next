@@ -1,5 +1,4 @@
 import Link from "next/link";
-import PremiumBackground from "@/components/PremiumBackground";
 import { isLocale, type Locale } from "@/lib/i18n";
 
 type Card = { t: string; d: string };
@@ -322,9 +321,10 @@ function getAboutCopy(locale: Locale) {
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "nl";
   const copy = getAboutCopy(locale);
   return {
     title: copy.metaTitle,
@@ -332,136 +332,134 @@ export async function generateMetadata({
   };
 }
 
-export default function OverOnsPage({
+export default async function OverOnsPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "nl";
   const copy = getAboutCopy(locale);
 
   return (
-    <PremiumBackground>
-      <main className="pt-28">
-        {/* HERO */}
-        <section className="mx-auto max-w-6xl px-4 pb-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs text-white/80">
-              {copy.kicker}
-            </div>
-
-            <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
-              {copy.titleA} <span className="text-[#F4C44E]">{copy.titleB}</span>
-            </h1>
-
-            <p className="mt-4 text-white/70 md:text-lg">{copy.intro}</p>
-
-            <div className="mt-7 flex justify-center">
-              <Link
-                href={`/${locale}/contact`}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
-              >
-                {copy.cta}
-              </Link>
-            </div>
+    <main className="bg-white pt-28">
+      {/* HERO */}
+      <section className="bg-[#F5F5F7] px-4 py-12">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-3 inline-flex rounded-full border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-4 py-1 text-xs font-medium text-[#7C3AED]">
+            {copy.kicker}
           </div>
-        </section>
 
-        {/* VALUES */}
-        <section className="mx-auto max-w-6xl px-4 pb-16">
-          <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-              {copy.valuesTitle}
+          <h1 className="text-4xl font-semibold tracking-tight text-gray-900 md:text-5xl">
+            {copy.titleA} <span className="text-[#7C3AED]">{copy.titleB}</span>
+          </h1>
+
+          <p className="mt-4 text-gray-500 md:text-lg">{copy.intro}</p>
+
+          <div className="mt-7 flex justify-center">
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#7C3AED] px-6 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {copy.cta}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* VALUES */}
+      <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-900 md:text-3xl">
+            {copy.valuesTitle}
+          </h2>
+          <p className="mt-3 text-sm text-gray-500 md:text-base">
+            {copy.valuesSubtitle}
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {copy.values.map((x) => (
+            <div
+              key={x.t}
+              className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:shadow-md"
+            >
+              <h3 className="text-base font-semibold text-gray-900 md:text-lg">
+                {x.t}
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">{x.d}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* WHY */}
+        <div className="mt-10 rounded-2xl border border-gray-100 bg-[#F5F5F7] p-6">
+          <h2 className="text-lg font-semibold text-gray-900 md:text-xl">
+            {copy.whyTitle}
+          </h2>
+
+          <ul className="mt-4 grid gap-3 text-sm text-gray-500 md:grid-cols-2">
+            {copy.whyPoints.map((s) => (
+              <li key={s} className="flex gap-2">
+                <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#7C3AED]" />
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* PROCESS */}
+        <div className="mt-10 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 md:text-xl">
+              {copy.processTitle}
             </h2>
-            <p className="mt-3 text-sm text-white/70 md:text-base">
-              {copy.valuesSubtitle}
-            </p>
+            <p className="text-sm text-gray-400">{copy.processSubtitle}</p>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {copy.values.map((x) => (
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {copy.steps.map((s) => (
               <div
-                key={x.t}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.20)] transition hover:bg-white/10"
+                key={s.t}
+                className={cx(
+                  "rounded-2xl border border-gray-100 bg-[#F5F5F7] p-5",
+                )}
               >
-                <h3 className="text-base font-semibold text-white md:text-lg">
-                  {x.t}
+                <h3 className="text-sm font-semibold text-gray-900 md:text-base">
+                  {s.t}
                 </h3>
-                <p className="mt-2 text-sm text-white/70">{x.d}</p>
+                <p className="mt-2 text-sm text-gray-500">{s.d}</p>
               </div>
             ))}
           </div>
+        </div>
 
-          {/* WHY */}
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-lg font-semibold text-white md:text-xl">
-              {copy.whyTitle}
-            </h2>
+        {/* CLOSING CTA */}
+        <div className="mt-10 rounded-2xl bg-[#080818] p-6 text-center">
+          <h3 className="text-lg font-semibold text-white md:text-xl">
+            {copy.closingTitle}
+          </h3>
+          <p className="mx-auto mt-2 max-w-3xl text-sm text-white/70 md:text-base">
+            {copy.closingText}
+          </p>
 
-            <ul className="mt-4 grid gap-3 text-sm text-white/70 md:grid-cols-2">
-              {copy.whyPoints.map((s) => (
-                <li key={s} className="flex gap-2">
-                  <span className="mt-1 inline-block h-2 w-2 rounded-full bg-[#F4C44E]" />
-                  <span>{s}</span>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#7C3AED] px-6 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {copy.closingPrimary}
+            </Link>
+
+            <Link
+              href={`/${locale}/projecten`}
+              className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/10 px-6 text-sm font-semibold text-white transition hover:bg-white/20"
+            >
+              {copy.closingSecondary}
+            </Link>
           </div>
-
-          {/* PROCESS */}
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6">
-            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-              <h2 className="text-lg font-semibold text-white md:text-xl">
-                {copy.processTitle}
-              </h2>
-              <p className="text-sm text-white/60">{copy.processSubtitle}</p>
-            </div>
-
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              {copy.steps.map((s) => (
-                <div
-                  key={s.t}
-                  className={cx(
-                    "rounded-2xl border border-white/10 bg-[#050B2A]/30 p-5",
-                    "shadow-[0_18px_60px_rgba(0,0,0,0.15)]",
-                  )}
-                >
-                  <h3 className="text-sm font-semibold text-white md:text-base">
-                    {s.t}
-                  </h3>
-                  <p className="mt-2 text-sm text-white/70">{s.d}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CLOSING CTA */}
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
-            <h3 className="text-lg font-semibold text-white md:text-xl">
-              {copy.closingTitle}
-            </h3>
-            <p className="mx-auto mt-2 max-w-3xl text-sm text-white/70 md:text-base">
-              {copy.closingText}
-            </p>
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href={`/${locale}/contact`}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
-              >
-                {copy.closingPrimary}
-              </Link>
-
-              <Link
-                href={`/${locale}/projecten`}
-                className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"
-              >
-                {copy.closingSecondary}
-              </Link>
-            </div>
-          </div>
-        </section>
-      </main>
-    </PremiumBackground>
+        </div>
+      </section>
+    </main>
   );
 }

@@ -17,7 +17,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
-        heading: ["Montserrat", "sans-serif"],
+        heading: ["Plus Jakarta Sans", "Inter", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

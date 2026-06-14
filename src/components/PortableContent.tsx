@@ -51,7 +51,7 @@ export default function PortableContent({ value }: Props) {
                 href={value?.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#F4C44E] underline"
+                className="text-[#7C3AED] underline"
               >
                 {children}
               </a>

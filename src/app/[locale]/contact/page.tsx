@@ -1,5 +1,4 @@
 // src/app/[locale]/contact/page.tsx
-import PremiumBackground from "@/components/PremiumBackground";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
 
 export const metadata = {
@@ -11,9 +10,10 @@ export const metadata = {
 export default async function ContactPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "nl";
   const t = getDict(locale);
 
   // Mini fallback als je dict nog geen "contactPage" keys heeft:
@@ -137,122 +137,120 @@ export default async function ContactPage({
   };
 
   return (
-    <PremiumBackground>
-      <main className="pt-28">
-        {/* HEADER */}
-        <section className="mx-auto max-w-6xl px-4 pb-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs text-white/80">
-              {L.badge}
-            </div>
-
-            <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
-              {locale === "nl" ? (
-                <>
-                  Vraag uw <span className="text-[#F4C44E]">gratis offerte</span>{" "}
-                  aan
-                </>
-              ) : (
-                <span className="text-[#F4C44E]">{L.title}</span>
-              )}
-            </h1>
-
-            <p className="mt-4 text-white/70 md:text-lg">{L.subtitle}</p>
+    <main className="bg-white pt-28">
+      {/* HEADER */}
+      <section className="bg-[#F5F5F7] px-4 py-12">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-3 inline-flex rounded-full border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-4 py-1 text-xs font-medium text-[#7C3AED]">
+            {L.badge}
           </div>
-        </section>
 
-        {/* CONTENT */}
-        <section className="mx-auto max-w-6xl px-4 pb-16">
-          <div className="grid gap-4 lg:grid-cols-2">
-            {/* FORM */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <form className="grid gap-4">
-                <div className="grid gap-2">
-                  <label className="text-sm text-white/80">{L.name}</label>
-                  <input
-                    required
-                    name="name"
-                    placeholder={L.namePh}
-                    className="h-12 rounded-xl border border-white/10 bg-[#050B2A]/35 px-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#F4C44E]/60"
-                  />
-                </div>
+          <h1 className="text-4xl font-semibold tracking-tight text-gray-900 md:text-5xl">
+            {locale === "nl" ? (
+              <>
+                Vraag uw <span className="text-[#7C3AED]">gratis offerte</span>{" "}
+                aan
+              </>
+            ) : (
+              <span className="text-[#7C3AED]">{L.title}</span>
+            )}
+          </h1>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="grid gap-2">
-                    <label className="text-sm text-white/80">{L.email}</label>
-                    <input
-                      required
-                      type="email"
-                      name="email"
-                      placeholder={L.emailPh}
-                      className="h-12 rounded-xl border border-white/10 bg-[#050B2A]/35 px-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#F4C44E]/60"
-                    />
-                  </div>
+          <p className="mt-4 text-gray-500 md:text-lg">{L.subtitle}</p>
+        </div>
+      </section>
 
-                  <div className="grid gap-2">
-                    <label className="text-sm text-white/80">{L.phone}</label>
-                    <input
-                      name="phone"
-                      placeholder={L.phonePh}
-                      className="h-12 rounded-xl border border-white/10 bg-[#050B2A]/35 px-4 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#F4C44E]/60"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2">
-                  <label className="text-sm text-white/80">{L.msg}</label>
-                  <textarea
-                    required
-                    name="message"
-                    placeholder={L.msgPh}
-                    rows={6}
-                    className="rounded-xl border border-white/10 bg-[#050B2A]/35 px-4 py-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#F4C44E]/60"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="mt-2 inline-flex h-12 items-center justify-center rounded-xl bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
-                >
-                  {L.submit}
-                </button>
-
-                <p className="text-xs text-white/60">{L.consent}</p>
-              </form>
-            </div>
-
-            {/* DETAILS + MAP */}
-            <div className="grid gap-4">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <h2 className="text-base font-semibold">{L.details}</h2>
-                <div className="mt-3 space-y-2 text-sm text-white/70">
-                  <p>
-                    <span className="text-white/90">{L.addressLabel}</span>{" "}
-                    Ever Kinetiq BV, Bieshof 11, 2321 Meer (Hoogstraten), België
-                  </p>
-                  <p>
-                    <span className="text-white/90">{L.phoneLabel}</span> +31 (0)629317622
-                  </p>
-                  <p>
-                    <span className="text-white/90">{L.emailLabel}</span>{" "}
-                    info@ek-b.be
-                  </p>
-                </div>
-              </div>
-
-              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                <iframe
-                  title="Google Maps"
-                  className="h-[320px] w-full"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src="https://www.google.com/maps?q=Brussels&output=embed"
+      {/* CONTENT */}
+      <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* FORM */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <form className="grid gap-4">
+              <div className="grid gap-2">
+                <label className="text-sm text-gray-700">{L.name}</label>
+                <input
+                  required
+                  name="name"
+                  placeholder={L.namePh}
+                  className="h-12 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#7C3AED]/60"
                 />
               </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <label className="text-sm text-gray-700">{L.email}</label>
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    placeholder={L.emailPh}
+                    className="h-12 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#7C3AED]/60"
+                  />
+                </div>
+
+                <div className="grid gap-2">
+                  <label className="text-sm text-gray-700">{L.phone}</label>
+                  <input
+                    name="phone"
+                    placeholder={L.phonePh}
+                    className="h-12 rounded-xl border border-gray-200 bg-white px-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#7C3AED]/60"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                <label className="text-sm text-gray-700">{L.msg}</label>
+                <textarea
+                  required
+                  name="message"
+                  placeholder={L.msgPh}
+                  rows={6}
+                  className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-[#7C3AED]/60"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="mt-2 inline-flex h-12 items-center justify-center rounded-xl bg-[#7C3AED] px-6 text-sm font-semibold text-white transition hover:opacity-90"
+              >
+                {L.submit}
+              </button>
+
+              <p className="text-xs text-gray-400">{L.consent}</p>
+            </form>
+          </div>
+
+          {/* DETAILS + MAP */}
+          <div className="grid gap-4">
+            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h2 className="text-base font-semibold text-gray-900">{L.details}</h2>
+              <div className="mt-3 space-y-2 text-sm text-gray-500">
+                <p>
+                  <span className="font-medium text-gray-700">{L.addressLabel}</span>{" "}
+                  Ever Kinetiq BV, Bieshof 11, 2321 Meer (Hoogstraten), België
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">{L.phoneLabel}</span> +31 (0)629317622
+                </p>
+                <p>
+                  <span className="font-medium text-gray-700">{L.emailLabel}</span>{" "}
+                  info@ek-b.be
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-gray-100">
+              <iframe
+                title="Google Maps"
+                className="h-[320px] w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps?q=Brussels&output=embed"
+              />
             </div>
           </div>
-        </section>
-      </main>
-    </PremiumBackground>
+        </div>
+      </section>
+    </main>
   );
 }

@@ -1,6 +1,5 @@
 // src/app/[locale]/diensten/page.tsx
 import Link from "next/link";
-import PremiumBackground from "@/components/PremiumBackground";
 import { getDict, isLocale, type Locale } from "@/lib/i18n";
 
 export const metadata = {
@@ -18,7 +17,7 @@ type Service = {
 
 function Badge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
+    <span className="inline-flex items-center rounded-full border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-3 py-1 text-xs font-medium text-[#7C3AED]">
       {children}
     </span>
   );
@@ -135,9 +134,10 @@ function tServiceText(locale: Locale) {
 export default async function DienstenPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "nl";
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "nl";
   const t = getDict(locale);
   const tt = tServiceText(locale);
 
@@ -695,99 +695,96 @@ export default async function DienstenPage({
   ];
 
   return (
-    <PremiumBackground>
-      <main className="pt-28">
-        {/* HERO */}
-        <section className="mx-auto max-w-6xl px-4 pb-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-3 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs text-white/80">
-              {t.sections?.servicesKicker ?? tt.kicker}
-            </div>
-
-            <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
-              {tt.heroTitleLeft} <span className="text-[#F4C44E]">{tt.heroTitleGold}</span>
-            </h1>
-
-            <p className="mt-4 text-white/70 md:text-lg">{tt.heroSubtitle}</p>
-
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href={`/${locale}/contact`}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
-              >
-                {/* Gebruik altijd t.nav.cta (die bestaat overal) */}
-                {t.nav?.cta ?? tt.kicker}
-              </Link>
-
-              <Link
-                href={`/${locale}/projecten`}
-                className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"
-              >
-                {tt.ctaProjects}
-              </Link>
-            </div>
+    <main className="bg-white pt-28">
+      {/* HERO */}
+      <section className="bg-[#F5F5F7] px-4 py-12">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mb-3 inline-flex rounded-full border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-4 py-1 text-xs font-medium text-[#7C3AED]">
+            {t.sections?.servicesKicker ?? tt.kicker}
           </div>
-        </section>
 
-        {/* CONTENT */}
-        <section className="mx-auto max-w-6xl px-4 pb-16">
-          <div className="grid gap-10">
-            {services.map((group) => (
-              <div key={group.section}>
-                <div className="mb-4 flex items-center justify-between gap-4">
-                  <h2 className="text-xl font-semibold tracking-tight text-white md:text-2xl">{group.section}</h2>
-                  <div className="h-px flex-1 bg-white/10" />
-                </div>
+          <h1 className="text-4xl font-semibold tracking-tight text-gray-900 md:text-5xl">
+            {tt.heroTitleLeft} <span className="text-[#7C3AED]">{tt.heroTitleGold}</span>
+          </h1>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                  {group.items.map((s) => (
-                    <div
-                      key={s.title}
-                      className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_18px_60px_rgba(0,0,0,0.25)] transition hover:bg-white/10"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="text-base font-semibold text-white md:text-lg">{s.title}</h3>
-                        {s.tag ? <Badge>{s.tag}</Badge> : null}
-                      </div>
+          <p className="mt-4 text-gray-500 md:text-lg">{tt.heroSubtitle}</p>
 
-                      <p className="mt-2 text-sm leading-relaxed text-white/70">{s.desc}</p>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#7C3AED] px-6 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {t.nav?.cta ?? tt.kicker}
+            </Link>
 
-                      <ul className="mt-4 space-y-2 text-sm text-white/70">
-                        {s.bullets.map((b) => (
-                          <li key={b} className="flex gap-2">
-                            <span className="mt-1 inline-block h-2 w-2 rounded-full bg-[#F4C44E]" />
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
+            <Link
+              href={`/${locale}/projecten`}
+              className="inline-flex h-12 items-center justify-center rounded-full border border-gray-200 bg-white px-6 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+              {tt.ctaProjects}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTENT */}
+      <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="grid gap-10">
+          {services.map((group) => (
+            <div key={group.section}>
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <h2 className="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl">{group.section}</h2>
+                <div className="h-px flex-1 bg-gray-200" />
               </div>
-            ))}
-          </div>
 
-          {/* CTA */}
-          <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
-            <h3 className="text-lg font-semibold text-white">{tt.bottomTitle}</h3>
-            <p className="mt-2 text-sm text-white/70">{tt.bottomSubtitle}</p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href={`/${locale}/contact`}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#F4C44E] px-6 text-sm font-semibold text-[#0B1033] transition hover:opacity-90"
-              >
-                {tt.bottomContact}
-              </Link>
-              <Link
-                href={`/${locale}/projecten`}
-                className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 text-sm font-semibold text-white/90 transition hover:bg-white/10"
-              >
-                {tt.bottomInspiration}
-              </Link>
+              <div className="grid gap-4 md:grid-cols-2">
+                {group.items.map((s) => (
+                  <div
+                    key={s.title}
+                    className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:shadow-md"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="text-base font-semibold text-gray-900 md:text-lg">{s.title}</h3>
+                      {s.tag ? <Badge>{s.tag}</Badge> : null}
+                    </div>
+
+                    <p className="mt-2 text-sm leading-relaxed text-gray-500">{s.desc}</p>
+
+                    <ul className="mt-4 space-y-2 text-sm text-gray-500">
+                      {s.bullets.map((b) => (
+                        <li key={b} className="flex gap-2">
+                          <span className="mt-1 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-[#7C3AED]" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-12 rounded-2xl bg-[#080818] p-6 text-center">
+          <h3 className="text-lg font-semibold text-white">{tt.bottomTitle}</h3>
+          <p className="mt-2 text-sm text-white/70">{tt.bottomSubtitle}</p>
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href={`/${locale}/contact`}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#7C3AED] px-6 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {tt.bottomContact}
+            </Link>
+            <Link
+              href={`/${locale}/projecten`}
+              className="inline-flex h-12 items-center justify-center rounded-full border border-white/15 bg-white/10 px-6 text-sm font-semibold text-white transition hover:bg-white/20"
+            >
+              {tt.bottomInspiration}
+            </Link>
           </div>
-        </section>
-      </main>
-    </PremiumBackground>
+        </div>
+      </section>
+    </main>
   );
 }

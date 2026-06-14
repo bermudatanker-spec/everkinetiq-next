@@ -32,10 +32,10 @@ export default function PremiumBackground({ children, className }: Props) {
       >
         <defs>
           <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#F4C44E" stopOpacity="0.0" />
-            <stop offset="0.35" stopColor="#F4C44E" stopOpacity="0.55" />
-            <stop offset="0.7" stopColor="#F4C44E" stopOpacity="0.35" />
-            <stop offset="1" stopColor="#F4C44E" stopOpacity="0.0" />
+            <stop offset="0" stopColor="#7C3AED" stopOpacity="0.0" />
+            <stop offset="0.35" stopColor="#7C3AED" stopOpacity="0.55" />
+            <stop offset="0.7" stopColor="#7C3AED" stopOpacity="0.35" />
+            <stop offset="1" stopColor="#7C3AED" stopOpacity="0.0" />
           </linearGradient>
 
           <filter id="glow">
